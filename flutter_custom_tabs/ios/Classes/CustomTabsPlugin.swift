@@ -6,7 +6,8 @@ private let keyURL = "url"
 private let keyOption = "safariVCOption"
 private let keyUrlsToClose = "urlsToClose"
 
-public class CustomTabsPlugin: NSObject, FlutterPlugin, SFSafariViewControllerDelegate {
+public class CustomTabsPlugin: NSObject, FlutterPlugin, SFSafariViewControllerDelegate, FlutterStreamHandler {
+    private var eventSink: FlutterEventSink?
     var urlsToClose : [String]?=nil
     var safariDisplayed = false
     
@@ -15,9 +16,14 @@ public class CustomTabsPlugin: NSObject, FlutterPlugin, SFSafariViewControllerDe
             name: "plugins.flutter.droibit.github.io/custom_tabs",
             binaryMessenger: registrar.messenger()
         )
+        let eventChannel = FlutterEventChannel(
+            name: "plugins.flutter.dhyash-simform.github.io/custom_tabs_status",
+            binaryMessenger: registrar.messenger()
+        )
         let instance = CustomTabsPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
         registrar.addApplicationDelegate(instance)
+        eventChannel.setStreamHandler(instance)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -50,6 +56,7 @@ public class CustomTabsPlugin: NSObject, FlutterPlugin, SFSafariViewControllerDe
     }
     
     public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+        self.eventSink?("CUSTOM_TAB_CLOSED");
         self.safariDisplayed = false
     }
     
@@ -68,6 +75,17 @@ public class CustomTabsPlugin: NSObject, FlutterPlugin, SFSafariViewControllerDe
             }
         }
         return false
+    }
+
+    // FlutterStreamHandler methods
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.eventSink = events
+        return nil
+    }
+
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.eventSink = nil
+        return nil
     }
 }
 

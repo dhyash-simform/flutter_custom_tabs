@@ -8,9 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
 
-import com.droibit.android.customtabs.launcher.CustomTabsFallback;
-import com.droibit.android.customtabs.launcher.CustomTabsLauncher;
-
 import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -19,9 +16,15 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
+import io.flutter.plugin.common.EventChannel;
 
 public class CustomTabsPlugin implements FlutterPlugin, ActivityAware, MethodCallHandler {
 
+    // Define an EventChannel
+    private EventChannel eventChannel;
+    private EventChannel.EventSink eventSink;
+
+    private static final int REQUEST_CODE = 1001;
     private static final String KEY_OPTION = "customTabsOption";
 
     private static final String KEY_URL = "url";
@@ -37,6 +40,18 @@ public class CustomTabsPlugin implements FlutterPlugin, ActivityAware, MethodCal
     @Override
     public void onAttachedToEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
         channel = new MethodChannel(binding.getBinaryMessenger(), "plugins.flutter.droibit.github.io/custom_tabs");
+        eventChannel = new EventChannel(binding.getBinaryMessenger(), "plugins.flutter.dhyash-simform.github.io/custom_tabs_status");
+        eventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink events) {
+                eventSink = events;
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                eventSink = null;
+            }
+        });
         channel.setMethodCallHandler(this);
     }
 
@@ -51,6 +66,14 @@ public class CustomTabsPlugin implements FlutterPlugin, ActivityAware, MethodCal
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
         activity = binding.getActivity();
+        binding.addActivityResultListener((requestCode, resultCode, data) -> {
+            if (requestCode == REQUEST_CODE) {
+                if (eventSink != null) {
+                    eventSink.success("CUSTOM_TAB_CLOSED");
+                }
+            }
+            return false;
+        });
     }
 
     @Override
@@ -91,8 +114,7 @@ public class CustomTabsPlugin implements FlutterPlugin, ActivityAware, MethodCal
             final Map<String, Object> options = (Map<String, Object>) args.get(KEY_OPTION);
             final CustomTabsIntent customTabsIntent = factory.createIntent(options);
             final Uri uri = Uri.parse(args.get(KEY_URL).toString());
-            final CustomTabsFallback fallback = factory.createFallback(options);
-            CustomTabsLauncher.launch(activity, customTabsIntent, uri, fallback);
+            activity.startActivityForResult(customTabsIntent.intent.setData(uri), REQUEST_CODE);
             result.success(null);
         } catch (ActivityNotFoundException e) {
             result.error(CODE_LAUNCH_ERROR, e.getMessage(), null);

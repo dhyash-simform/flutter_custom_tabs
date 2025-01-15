@@ -41,8 +41,8 @@ import 'package:flutter_custom_tabs_platform_interface/flutter_custom_tabs_platf
 /// ```
 Future<void> launch(String urlString,
     {CustomTabsOption? customTabsOption,
-      SafariViewControllerOption? safariVCOption,
-      List<String>? urlsToClose}) async {
+    SafariViewControllerOption? safariVCOption,
+    List<String>? urlsToClose}) async {
   final url = Uri.parse(urlString.trimLeft());
   if (url.scheme != 'http' && url.scheme != 'https') {
     throw PlatformException(
@@ -51,8 +51,7 @@ Future<void> launch(String urlString,
     );
   }
 
-  final launch = () =>
-      CustomTabsPlatform.instance.launch(
+  final launch = () => CustomTabsPlatform.instance.launch(
         url.toString(),
         customTabsOption: customTabsOption,
         safariVCOption: safariVCOption,
@@ -70,7 +69,8 @@ Future<void> launch(String urlString,
   }
 }
 
-void _applyStatusBarBrightnessTemporally(Brightness? statusBarBrightness, {
+void _applyStatusBarBrightnessTemporally(
+  Brightness? statusBarBrightness, {
   required Future<void> Function() action,
 }) async {
   var previousAutomaticSystemUiAdjustment = true;
@@ -93,3 +93,12 @@ void _applyStatusBarBrightnessTemporally(Brightness? statusBarBrightness, {
         previousAutomaticSystemUiAdjustment;
   }
 }
+
+const _eventChannel = EventChannel(
+  'plugins.flutter.dhyash-simform.github.io/custom_tabs_status',
+);
+
+/// returns true if tab is closed and returns false if tab is open
+Stream<bool> getCustomTabClosedStatusStream() => _eventChannel
+    .receiveBroadcastStream()
+    .map((event) => event.toString() == 'CUSTOM_TAB_CLOSED');

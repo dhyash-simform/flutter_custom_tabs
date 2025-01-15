@@ -169,6 +169,7 @@ class _MockCustomTabsPlatform extends Mock
     String? urlString, {
     CustomTabsOption? customTabsOption,
     SafariViewControllerOption? safariVCOption,
+    List<String>? urlsToClose,
   }) {
     return super.noSuchMethod(
       Invocation.method(

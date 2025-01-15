@@ -19,6 +19,7 @@ class CustomTabsPlugin extends CustomTabsPlatform {
     String urlString, {
     CustomTabsOption? customTabsOption,
     SafariViewControllerOption? safariVCOption,
+    List<String>? urlsToClose,
   }) {
     final plugin = UrlLauncherPlatform.instance as UrlLauncherPlugin;
     return plugin.launch(urlString).then((_) => null);

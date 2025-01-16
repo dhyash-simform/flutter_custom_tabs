@@ -11,8 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
 import androidx.browser.customtabs.CustomTabsIntent;
 
-import com.droibit.android.customtabs.launcher.CustomTabsFallback;
-import com.droibit.android.customtabs.launcher.CustomTabsLauncher;
+//import com.droibit.android.customtabs.launcher.CustomTabsFallback;
+//import com.droibit.android.customtabs.launcher.CustomTabsLauncher;
 
 import java.util.List;
 import java.util.Map;
@@ -123,21 +123,21 @@ class CustomTabsFactory {
         }
     }
 
-    @NonNull
-    CustomTabsFallback createFallback(@NonNull Map<String, Object> options) {
-        final List<String> extraCustomTabs;
-        if (options.containsKey(KEY_EXTRA_CUSTOM_TABS)) {
-            extraCustomTabs = ((List<String>) options.get(KEY_EXTRA_CUSTOM_TABS));
-        } else {
-            extraCustomTabs = null;
-        }
-
-        final CustomTabsFallback fallback;
-        if (extraCustomTabs != null && !extraCustomTabs.isEmpty()) {
-            fallback = new CustomTabsLauncher.LaunchNonChromeCustomTabs(extraCustomTabs);
-        } else {
-            fallback = new CustomTabsLauncher.LaunchBrowser();
-        }
-        return fallback;
-    }
+//    @NonNull
+//    CustomTabsFallback createFallback(@NonNull Map<String, Object> options) {
+//        final List<String> extraCustomTabs;
+//        if (options.containsKey(KEY_EXTRA_CUSTOM_TABS)) {
+//            extraCustomTabs = ((List<String>) options.get(KEY_EXTRA_CUSTOM_TABS));
+//        } else {
+//            extraCustomTabs = null;
+//        }
+//
+//        final CustomTabsFallback fallback;
+//        if (extraCustomTabs != null && !extraCustomTabs.isEmpty()) {
+//            fallback = new CustomTabsLauncher.LaunchNonChromeCustomTabs(extraCustomTabs);
+//        } else {
+//            fallback = new CustomTabsLauncher.LaunchBrowser();
+//        }
+//        return fallback;
+//    }
 }

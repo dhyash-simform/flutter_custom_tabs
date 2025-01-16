@@ -23,8 +23,11 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace = "com.github.droibit.plugins.customtabs"
     compileSdkVersion 30
+
+    if (project.android.hasProperty("namespace")) {
+        namespace = "com.github.droibit.plugins.customtabs"
+    }
 
     defaultConfig {
         minSdkVersion 16
@@ -38,6 +41,6 @@ android {
     }
 
     dependencies {
-        api 'com.github.droibit.customtabslauncher:launcher:1.5.0'
+        implementation 'androidx.browser:browser:1.8.0'
     }
 }

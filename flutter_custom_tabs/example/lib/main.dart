@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
         builder: (_context) => Scaffold(
           appBar: AppBar(
             title: const Text('Flutter Custom Tabs Example'),
-            brightness: Brightness.dark,
           ),
           body: Center(
             child: TextButton(
